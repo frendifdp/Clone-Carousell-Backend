@@ -8,7 +8,7 @@ const conn = require('../configs/db');
 
 // let sql = `SELECT product.id_product as id, product.product_name as product_name, product.brand as brand, n.time as time, c.category as category, c.id as categoryId
 //     FROM note as n INNER JOIN category as c ON n.category=c.id `;
-const sql = `SELECT *, sc.name_sub_category FROM product INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category`
+const selectQuery = `SELECT *, sc.name_sub_category FROM product INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category`
 
 exports.getProducts = function (req, res){
     let search = req.query.search || "";
@@ -63,7 +63,7 @@ exports.getProducts = function (req, res){
         sortBy = `product_name ASC`
     }
 
-    let ssql = sql + ` WHERE ${where} ORDER BY ${sortBy} ${pageSql}`;
+    let ssql = selectQuery + ` WHERE ${where} ORDER BY ${sortBy} ${pageSql}`;
     console.log(ssql)
     conn.query(ssql, function(error, rows, field){
         // var data = new Array;
@@ -72,6 +72,11 @@ exports.getProducts = function (req, res){
         //"data_found": rows.length,
         let output = {status: 200, "data": rows, "totalPage": maxPage}
         //rows.push(data);
+        //console.log(rows[0].image)
+        
+        // let img = "[\"as\", \"sc\"]"
+        // img = JSON.parse(img)
+        // console.log(JSON.stringify(img[0]))
         if(totalData == 0){
             res.send([{status: 204, data:"Product not found"}])
         }
@@ -87,6 +92,7 @@ exports.getProducts = function (req, res){
 exports.product = function (req, res){
     
 }
+
 exports.note = function (req, res) {
     let id = req.params.id || "";
     let ssql = sql + `WHERE n.id='${id}'`;
@@ -126,33 +132,66 @@ exports.categories = function (req, res) {
 //         res.json(rows);
 //     })
 // }
+
 //POST
-exports.newnote = function (req, res) {
-    let title = req.body.title;
-    let note = req.body.note;
-    let category = req.body.category;
-    if(typeof(title) == 'undefined' && typeof(note) == 'undefined' && typeof(category) == 'undefined'){
-        res.send({
-            status: "failed",
-            message: "field required",
-        })
-    }
-    if(title == "" && note == "" && category == ""){
-        res.send({
-            status: "failed",
-            message: "field required",
-        })
-    }
-    else{
-        let sql = `INSERT INTO note SET title='${title}', note='${note}', category='${category}'`;
-        console.log(sql);
-        conn.query(sql, function(a, b, c){
-            return res.send({
-                status: 200,
-                message: "note has been added",
+exports.postProduct = function (req, res) {
+    let temp = req.body;
+    let body = JSON.stringify(temp)
+    // if(typeof(title) == 'undefined' && typeof(note) == 'undefined' && typeof(category) == 'undefined'){
+    //     res.send({
+    //         status: "failed",
+    //         message: "field required",
+    //     })
+    // }
+    // if(title == "" && note == "" && category == ""){
+    //     res.send({
+    //         status: "failed",
+    //         message: "field required",
+    //     })
+    // }
+    // else{
+
+    //REGEX
+    body = body.replace(/":+/gi, '=');
+    body = body.replace(/,"+/gi, ', ');
+	body = body.replace("{\"", '');
+    body = body.replace("}", '');
+    
+    // {
+    //     "product_name": "Baju",
+    //     "brand": "No brand",
+    //     "`condition`": 1,
+    //     "price": 100,
+    //     "description": "why",
+    //     "date_created": "2019-07-09",
+    //     "id_wishlist": 1,
+    //     "id_sub_category": 1,
+    //     "id_user": 2,
+    //     "image": "[\"image1\", \"image2\", \"image3\"]"
+    // }
+
+    let sql = `INSERT INTO product SET ${body}`;
+    console.log(sql);
+    conn.query(sql, function(error, rows, c){
+        try {
+            let ssql = selectQuery + ` WHERE id_product=${rows.insertId}`;
+            conn.query(ssql, function(error, rows, c){
+                let data = {
+                    status: 200,
+                    message: "Product has been added",
+                    data: rows
+                }
+                return res.json(data)
             })
-        })
-    }
+        }
+        catch (error) {
+            return res.send([{
+                status: 400,
+                message: "Insert error",
+                data: JSON.stringify(temp)
+            }])
+        }
+    })
 }
 
 exports.newcategory = function(req, res){
