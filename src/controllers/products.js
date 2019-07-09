@@ -10,11 +10,13 @@ const conn = require('../configs/db');
 //     FROM note as n INNER JOIN category as c ON n.category=c.id `;
 let sql = `SELECT * FROM product`
 
-exports.notes = function (req, res){
+exports.getProducts = function (req, res){
     let search = req.query.search || "";
     let sort = req.query.sort || "DESC";
     var lim = req.query.limit || 10;
     var off = (req.query.page - 1) * lim || 0;
+    let start = req.query.start || 0;
+    let end = req.query.end || 999999999999;
     if(off < 0){
         off = 1;
     }
@@ -27,7 +29,7 @@ exports.notes = function (req, res){
         totalData = row[0].total;
         maxPage = Math.ceil(Number(totalData) / lim);
     });
-    var condition = ``
+    var price = `price BETWEEN '%${start}' AND '%${end}'`;
     sort = sort.toUpperCase();
     if(sort == 'DESC' || sort == 'ASC'){
         let ssql = sql + `WHERE n.title LIKE '%${search}%' ORDER BY n.time ${sort} ${pageSql}`;
