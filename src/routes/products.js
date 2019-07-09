@@ -21,11 +21,11 @@ const Route = express.Router();
 const controller 		= require('../controllers/products');
 
 Route
-    .get('/products', controller.getProducts)
-    // .get('/product/:id', controller.getProduct)
-    // .post('/product', controller.postProduct)
-    // .put('/product/:id', controller.putProduct)
-    // .delete('/product/:id', controller.delProduct)
+    .get('/', controller.getProducts)
+    //.get('/:id', controller.getProduct)
+    // .post('/', controller.postProduct)
+    // .put('/:id', controller.putProduct)
+    // .delete('/:id', controller.delProduct)
 
 module.exports = Route;
 
