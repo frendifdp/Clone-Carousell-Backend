@@ -2,9 +2,9 @@
 const express = require('express');
 const Route = express.Router();
 
-const users 		= require('../controllers/products');
+const users 		= require('../controllers/users');
 
 Route
-	// .get('/products', users.getProducts)
+	.get('/', users.getUsers)
 
 module.exports = Route;
