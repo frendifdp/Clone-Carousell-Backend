@@ -19,6 +19,10 @@ app.use(bodyParser.json());
 
 app.use('/login', loginRoute);
 app.use('/products', productsRoute)
+app.use('/users', usersRoute);
+app.use('/cart', cartRoute);
+
+
 
 app.use(verifyToken, (req, res, next) => {  
 	jwt.verify(req.token, 'secretkey', (err) => {
@@ -43,5 +47,3 @@ function verifyToken(req, res, next) {
   	}
 }
 
-app.use('/users', usersRoute);
-app.use('/cart', cartRoute);

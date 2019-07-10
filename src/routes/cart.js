@@ -9,7 +9,4 @@ Route
 	.post('/:id_user', cart.createCart)
 	.patch('/:id_user', cart.updateCart)
 
-	// .patch('/password/:id_user', users.changePassword)
-
-
 module.exports = Route;

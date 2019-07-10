@@ -14,14 +14,10 @@ function getTime(){
 
 }
 
-// console.log();
-
-
 exports.getCart = function(req, res){
 
 	const id 		= req.params.id_user || '';
-
-	const query 		=  `SELECT *  FROM cart WHERE id_user=${id}  LIMIT 10`;
+	const query 	=  `SELECT *  FROM cart LEFT JOIN product ON cart.id_product = product.id_product LEFT JOIN sub_category ON product.id_sub_category=id_category LEFT JOIN category ON sub_category.id_category=category.id_category WHERE cart.id_user=${id}  LIMIT 10`;
 		connection.query(
 			query,
 			function(error, rows, field){
