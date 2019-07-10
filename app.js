@@ -9,6 +9,7 @@ const usersRoute 	  = require('./src/routes/users');
 const productsRoute   = require('./src/routes/products');
 const cartRoute 	    = require('./src/routes/cart');
 const loginRoute 	    = require('./src/routes/login');
+const categotyRoute 	    = require('./src/routes/categories');
 
 
 app.listen(port);
@@ -21,7 +22,7 @@ app.use('/login', loginRoute);
 app.use('/products', productsRoute)
 app.use('/users', usersRoute);
 app.use('/cart', cartRoute);
-
+app.use('/categories', categotyRoute);
 
 
 app.use(verifyToken, (req, res, next) => {  
