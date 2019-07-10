@@ -2,12 +2,7 @@
 
 const conn = require('../configs/db');
 
-//INSERT INTO note SET title=?' BETTER than
-//INSERT INTO note SET title='${title}'
 //GET
-
-// let sql = `SELECT product.id_product as id, product.product_name as product_name, product.brand as brand, n.time as time, c.category as category, c.id as categoryId
-//     FROM note as n INNER JOIN category as c ON n.category=c.id `;
 const selectQuery = `SELECT *, sc.name_sub_category FROM product INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category`
 
 exports.getProducts = function (req, res){
