@@ -62,7 +62,7 @@ exports.getProducts = function (req, res){
         sortBy = `price ASC`;
     }
     else{
-        sortBy = `product_name ASC`
+        sortBy = `id_product DESC`
     }
 
     let ssql = selectQuery + ` WHERE ${where} ORDER BY ${sortBy} ${pageSql}`;
