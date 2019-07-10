@@ -3,7 +3,9 @@
 const conn = require('../configs/db');
 
 //GET
-const selectQuery = `SELECT *, sc.name_sub_category FROM product INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category`
+const selectQuery = `SELECT product.*, sc.name_sub_category, u.username, u.image as image_user FROM product 
+INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category
+INNER JOIN user as u ON u.id_user=product.id_user`
 
 exports.getProducts = function (req, res){
     let search = req.query.search || "";
@@ -39,8 +41,13 @@ exports.getProducts = function (req, res){
     //MAX PAGE
     let countSql = `SELECT COUNT(id_product) as total FROM product WHERE ${where}`;
     conn.query(countSql, function(error, row, field){
-        totalData = row[0].total;
-        maxPage = Math.ceil(Number(totalData) / lim);
+        try {
+            totalData = row[0].total;
+            maxPage = Math.ceil(Number(totalData) / lim);
+        }
+        catch (error) {
+            console.log("error")
+        }
     });
     
     //SORTING
