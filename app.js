@@ -9,7 +9,8 @@ const usersRoute 	  = require('./src/routes/users');
 const productsRoute   = require('./src/routes/products');
 const cartRoute 	    = require('./src/routes/cart');
 const loginRoute 	    = require('./src/routes/login');
-const categotyRoute 	    = require('./src/routes/categories');
+const categoryRoute 	    = require('./src/routes/categories');
+const subCategoryRoute 	    = require('./src/routes/sub_category');
 
 
 app.listen(port);
@@ -22,8 +23,8 @@ app.use('/login', loginRoute);
 app.use('/products', productsRoute)
 app.use('/users', usersRoute);
 app.use('/cart', cartRoute);
-app.use('/categories', categotyRoute);
-
+app.use('/categories', categoryRoute);
+app.use('/sub_category', subCategoryRoute);
 
 app.use(verifyToken, (req, res, next) => {  
 	jwt.verify(req.token, 'secretkey', (err) => {
