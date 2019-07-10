@@ -2,12 +2,7 @@
 
 const conn = require('../configs/db');
 
-//INSERT INTO note SET title=?' BETTER than
-//INSERT INTO note SET title='${title}'
 //GET
-
-// let sql = `SELECT product.id_product as id, product.product_name as product_name, product.brand as brand, n.time as time, c.category as category, c.id as categoryId
-//     FROM note as n INNER JOIN category as c ON n.category=c.id `;
 const selectQuery = `SELECT *, sc.name_sub_category FROM product INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category`
 
 exports.getProducts = function (req, res){
@@ -64,19 +59,8 @@ exports.getProducts = function (req, res){
     }
 
     let ssql = selectQuery + ` WHERE ${where} ORDER BY ${sortBy} ${pageSql}`;
-    console.log(ssql)
     conn.query(ssql, function(error, rows, field){
-        // var data = new Array;
-        // data = {"total": totalData, "page": Number(req.query.page) || 1,
-        // "totalPage": maxPage, "limit" : Number(lim) };
-        //"data_found": rows.length,
         let output = {status: 200, "data": rows, "totalPage": maxPage}
-        //rows.push(data);
-        //console.log(rows[0].image)
-        
-        // let img = "[\"as\", \"sc\"]"
-        // img = JSON.parse(img)
-        // console.log(JSON.stringify(img[0]))
         if(totalData == 0){
             res.send([{status: 204, data:"Product not found"}])
         }
@@ -120,22 +104,8 @@ exports.postProduct = function (req, res) {
     body = body.replace(/,"+/gi, ', ');
 	body = body.replace("{\"", '');
     body = body.replace("}", '');
-    
-    // {
-    //     "product_name": "Baju",
-    //     "brand": "No brand",
-    //     "`condition`": 1,
-    //     "price": 100,
-    //     "description": "why",
-    //     "date_created": "2019-07-09",
-    //     "id_wishlist": 1,
-    //     "id_sub_category": 1,
-    //     "id_user": 2,
-    //     "image": "[\"image1\", \"image2\", \"image3\"]"
-    // }
 
     let sql = `INSERT INTO product SET ${body}`;
-    console.log(sql);
     let iferror = {
         status: 400,
         message: "Insert error",
@@ -177,19 +147,6 @@ exports.patchProduct = function(req, res){
 	body = body.replace("{\"", '');
     body = body.replace("}", '');
     
-    // {
-    //     "product_name": "Baju",
-    //     "brand": "No brand",
-    //     "`condition`": 1,
-    //     "price": 100,
-    //     "description": "why",
-    //     "date_created": "2019-07-09",
-    //     "id_wishlist": 1,
-    //     "id_sub_category": 1,
-    //     "id_user": 2,
-    //     "image": "[\"image1\", \"image2\", \"image3\"]"
-    // }
-
     let sql = `UPDATE product WHERE id_product=${id} SET ${body}`;
     console.log(sql);
     let iferror = {
