@@ -22,10 +22,11 @@ const controller 		= require('../controllers/products');
 
 Route
     .get('/', controller.getProducts)
-    //.get('/:id', controller.getProduct)
+    .get('/:id', controller.getProduct)
     .post('/', controller.postProduct)
     // .put('/:id', controller.putProduct)
-    // .delete('/:id', controller.delProduct)
+    .patch('/:id', controller.patchProduct)
+    .delete('/:id', controller.delProduct)
 
 module.exports = Route;
 

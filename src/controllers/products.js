@@ -89,67 +89,31 @@ exports.getProducts = function (req, res){
     })
 }
     
-exports.product = function (req, res){
-    
-}
-
-exports.note = function (req, res) {
-    let id = req.params.id || "";
-    let ssql = sql + `WHERE n.id='${id}'`;
-    conn.query(ssql,
-        function (error, rows, field){
-            if(id == ""){
-                res.json({"message": "404 not found"});
+exports.getProduct = function (req, res){
+    let id = req.params.id;
+    let ssql = selectQuery + ` WHERE id_product=${id}`;
+    conn.query(ssql, function(error, rows, c){
+        try {
+            let data = {
+                status: 200,
+                data: rows
             }
-            else{
-                if(error) throw error
-                else if(rows.length == 0){
-                    res.send({message: "no data found"})
-                }
-                else{
-                    res.json(rows);
-                }
-            }
+            return res.json(data)
         }
-    );
-}
-
-exports.categories = function (req, res) {
-    let sql = `SELECT * FROM category`;
-    conn.query(sql, function(error, rows){
-        if(error) throw error;
-        else{
-            res.json(rows);
+        catch (error) {
+            return res.send({
+                status: 400,
+                message: "Get error",
+                data: JSON.stringify(temp)
+            })
         }
     })
 }
-
-// exports.pagination = function (req, res) {
-//     let lim = req.params.lim;
-//     let off = req.params.off;
-//     let ssql = sql + `LIMIT ${lim} OFFSET ${off}`
-//     conn.query(ssql, function(error, rows, field){
-//         res.json(rows);
-//     })
-// }
 
 //POST
 exports.postProduct = function (req, res) {
     let temp = req.body;
     let body = JSON.stringify(temp)
-    // if(typeof(title) == 'undefined' && typeof(note) == 'undefined' && typeof(category) == 'undefined'){
-    //     res.send({
-    //         status: "failed",
-    //         message: "field required",
-    //     })
-    // }
-    // if(title == "" && note == "" && category == ""){
-    //     res.send({
-    //         status: "failed",
-    //         message: "field required",
-    //     })
-    // }
-    // else{
 
     //REGEX
     body = body.replace(/":+/gi, '=');
@@ -172,118 +136,114 @@ exports.postProduct = function (req, res) {
 
     let sql = `INSERT INTO product SET ${body}`;
     console.log(sql);
+    let iferror = {
+        status: 400,
+        message: "Insert error",
+        data: JSON.stringify(temp)
+    }
     conn.query(sql, function(error, rows, c){
         try {
             let ssql = selectQuery + ` WHERE id_product=${rows.insertId}`;
             conn.query(ssql, function(error, rows, c){
-                let data = {
-                    status: 200,
-                    message: "Product has been added",
-                    data: rows
+                try {
+                    let data = {
+                        status: 200,
+                        message: "Product has been added",
+                        data: rows
+                    }
+                    return res.json(data)
                 }
-                return res.json(data)
+                catch (error) {
+                    return res.send(iferror)
+                }
             })
         }
         catch (error) {
-            return res.send([{
-                status: 400,
-                message: "Insert error",
-                data: JSON.stringify(temp)
-            }])
-        }
-    })
-}
-
-exports.newcategory = function(req, res){
-    let category = req.body.category;
-    let iconuri = req.body.iconuri;
-    let sql = `INSERT INTO category SET category='${category}', icon='${iconuri}'`;
-    conn.query(sql, function(error, rows, field){
-        if(error) throw error
-        else{
-            return res.send({
-                status: 200,
-                message: "category has been added",
-            })
+            return res.send(iferror)
         }
     })
 }
 
 //PUT
-exports.putnote = function(req, res){
-    let title = req.body.title;
-    let note = req.body.note;
-    let category = req.body.category;
+exports.patchProduct = function(req, res){
     let id = req.params.id || "";
-    if(typeof(title) == 'undefined' && typeof(note) == 'undefined' && typeof(category) == 'undefined'){
-        return res.send({
-            status: "failed",
-            message: "field required",
-        })
+
+    let temp = req.body;
+    let body = JSON.stringify(temp)
+
+    //REGEX
+    body = body.replace(/":+/gi, '=');
+    body = body.replace(/,"+/gi, ', ');
+	body = body.replace("{\"", '');
+    body = body.replace("}", '');
+    
+    // {
+    //     "product_name": "Baju",
+    //     "brand": "No brand",
+    //     "`condition`": 1,
+    //     "price": 100,
+    //     "description": "why",
+    //     "date_created": "2019-07-09",
+    //     "id_wishlist": 1,
+    //     "id_sub_category": 1,
+    //     "id_user": 2,
+    //     "image": "[\"image1\", \"image2\", \"image3\"]"
+    // }
+
+    let sql = `UPDATE product WHERE id_product=${id} SET ${body}`;
+    console.log(sql);
+    let iferror = {
+        status: 400,
+        message: "Update error",
+        data: JSON.stringify(temp)
     }
-    else if(id == ""){
-        return res.send({
-            status: "failed",
-            message: "id required",
-        })
-    }
-    else{
-        let sql = `UPDATE note SET title='${title}', note='${note}', category='${category}' WHERE id='${id}'`
-        console.log(sql)
-        conn.query(sql, function(error, rows, field){
-            return res.send([{
-                status: 200,
-                message: "note has been updated",
-                data: [{
-                    id: id,
-                    title: title,
-                    note: note,
-                    category: category
-                }]
-            }])
-        })
-    }
+
+    conn.query(sql, function(error, rows, c){
+        try {
+            let ssql = selectQuery + ` WHERE id_product=${id}`;
+            conn.query(ssql, function(error, rows, c){
+                try {
+                    let data = {
+                        status: 200,
+                        message: "Product has been updated",
+                        data: rows
+                    }
+                    return res.json(data)
+                    
+                }
+                catch (error) {
+                    return res.json(iferror)
+                }
+            })
+        }
+        catch (error) {
+            return res.send(iferror)
+        }
+    })
 }
 
 //DELETE
-exports.delnote = function(req, res){
+exports.delProduct = function(req, res){
     let id = req.params.id || "";
     if(id == ""){
         return res.send({
-            status: "failed",
-            message: "id required",
+            status: "400",
+            message: "Id required",
         })
     }
     else{
-        let sql = `DELETE FROM note WHERE id='${id}'`;
+        let sql = `DELETE FROM product WHERE id=${id}`;
         conn.query(sql, function (error, row) {
-            if(error) throw error
-            else {
-                return res.send({
+            try {
+                return res.send([{
                     status: 200,
                     message: "note has been deleted",
-                })
+                }])
             }
-        })
-    }
-}
-
-exports.delcategory = function(req, res){
-    let id = req.params.id || "";
-    if(id == ""){
-        return res.send({
-            status: "failed",
-            message: "id required",
-        })
-    }
-    else{
-        let sql = `DELETE FROM category WHERE id='${id}'`;
-        conn.query(sql, function (error, row) {
-            if(error) throw error
-            else {
+            catch (error) {
                 return res.send({
-                    status: 200,
-                    message: "category has been deleted",
+                    status: 400,
+                    message: "Delete failed",
                 })
             }
         })
