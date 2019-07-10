@@ -195,7 +195,8 @@ exports.delProduct = function(req, res){
             try {
                 return res.send([{
                     status: 200,
-                    message: "note has been deleted",
+                    id: id,
+                    message: "Product has been deleted",
                 }])
             }
             catch (error) {
