@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // 'use strict'
 
 // module.exports = function(app){
@@ -16,19 +14,10 @@
 
 // }
 
->>>>>>> origin/frendi
 'use strict'
 const express = require('express');
 const Route = express.Router();
 
-<<<<<<< HEAD
-const users 		= require('../controllers/products');
-
-Route
-	// .get('/products', users.getProducts)
-
-module.exports = Route;
-=======
 const controller 		= require('../controllers/products');
 
 Route
@@ -41,4 +30,3 @@ Route
 
 module.exports = Route;
 
->>>>>>> origin/frendi
