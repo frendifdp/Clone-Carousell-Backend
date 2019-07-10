@@ -200,11 +200,11 @@ exports.delProduct = function(req, res){
         let sql = `DELETE FROM product WHERE id=${id}`;
         conn.query(sql, function (error, row) {
             try {
-                return res.send([{
+                return res.send({
                     status: 200,
                     id: id,
                     message: "Product has been deleted",
-                }])
+                })
             }
             catch (error) {
                 return res.send({
