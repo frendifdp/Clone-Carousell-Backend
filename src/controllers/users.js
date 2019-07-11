@@ -22,6 +22,15 @@ function decrypt(text){
   return dec;
 }
 
+function getTime(){
+	const today = new Date();
+	const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+	const dateTime = date+' '+time;
+	return dateTime;
+}
+
+
 exports.getUsers = function(req, res){
 
 	const username 		= req.query.username;
@@ -89,9 +98,10 @@ exports.createUsers = function(req, res){
 											message: 'Email has been registered'
 										})
 									}else{
+										const date = getTime();
 										connection.query( //insert
-											`Insert into user set username=?, password=?, email=?`,
-											[user, password, email],
+											`Insert into user set username=?, password=?, email=?, date_create=?`,
+											[user, password, email, date],
 											function(error, rowsss, field){
 												if(error){
 													console.log(error);

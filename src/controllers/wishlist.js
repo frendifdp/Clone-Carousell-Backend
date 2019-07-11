@@ -6,12 +6,10 @@ const connection= require('../configs/db');
 
 exports.getWishlist = function(req, res){
 
-	const id_user 		= req.query.id_user;
+	const id_user 		= req.query.id_user || '';
 	const id_product 	= req.query.id_product;
 
 	const query 		=  `SELECT *  FROM wishlist WHERE id_product=${id_product} AND id_user=${id_user} LIMIT 10`;
-	const query_total 	=  `SELECT count(*) as total_wishlist  FROM wishlist WHERE id_product=${id_product} AND id_user=${id_user} LIMIT 10`;
-
 		connection.query(
 			query,
 			function(error, rows, field){
@@ -19,20 +17,9 @@ exports.getWishlist = function(req, res){
 					console.log(error);
 				}else{
 					if(rows!=''){
-						connection.query(
-							query_total,
-							function(error, rowss, field){
-								if(error){
-									console.log(error)
-								}else{
-									const total_wishlist = rowss[0].total_wishlist
-									return res.send({
-										data  			: rows,
-										total_wishlist	: total_wishlist
-									})
-								}
-							}
-						)
+						return res.send({
+							data  : rows[0],
+						})		
 					}else{
 						return res.send({
 							message:'Data not found',
@@ -40,11 +27,10 @@ exports.getWishlist = function(req, res){
 					}
 
 				}
-
 			}
-
 		)
 }
+
 
 
 
