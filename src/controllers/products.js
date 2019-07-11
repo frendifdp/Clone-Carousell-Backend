@@ -3,9 +3,10 @@
 const conn = require('../configs/db');
 
 //GET
-const selectQuery = `SELECT product.*, sc.name_sub_category, u.username, u.image as image_user FROM product 
-INNER JOIN sub_category as sc ON sc.id_sub_category=product.id_sub_category
-INNER JOIN user as u ON u.id_user=product.id_user`
+const selectQuery = `SELECT product.*, category.category_name, sub_category.name_sub_category, u.username, u.image as image_user FROM product
+INNER JOIN sub_category ON sub_category.id_sub_category=product.id_sub_category 
+INNER JOIN category ON category.id_category=sub_category.id_category 
+INNER JOIN user as u ON u.id_user=product.id_user `
 
 exports.getProducts = function (req, res){
     let search = req.query.search || "";

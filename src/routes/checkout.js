@@ -2,11 +2,11 @@
 const express = require('express');
 const Route = express.Router();
 
-const users 		= require('../controllers/users');
+const checkout 		= require('../controllers/checkout');
 
 Route
-	// .get('/', users.getCheckout)
-	// .post('/', users.createCheckout)
+	.get('/', checkout.getCheckout)
+	.post('/', checkout.createCheckout)
 	// .patch('/:id_user', users.updateCheckout)
 
 module.exports = Route;
