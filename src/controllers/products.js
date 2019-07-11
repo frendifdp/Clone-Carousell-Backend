@@ -92,23 +92,33 @@ exports.getProduct = function (req, res){
     else{
         where = where + `id_sub_category=${id_sub_category}`;
     }
-    let ssql = selectQuery + where;
-    conn.query(ssql, function(error, rows, c){
-        try {
-            let data = {
-                status: 200,
-                data: rows
+    conn.query(
+        `SELECT count(*) as total_wishlist  FROM wishlist WHERE id_product=${id}`,
+        function(error, rows, field){
+            if(error){
+                console.log(error)
+            }else{
+                    let ssql = selectQuery + where;
+                    conn.query(ssql, function(error, rowss, c){
+                        try {
+                            let data = {
+                                status: 200,
+                                data: rowss,
+                                total_wishlist: rows[0].total_wishlist
+                            }
+                            return res.json(data)
+                        }
+                        catch (error) {
+                            return res.send({
+                                status: 400,
+                                message: "Get error",
+                                data: JSON.stringify(temp)
+                            })
+                        }
+                    })
             }
-            return res.json(data)
         }
-        catch (error) {
-            return res.send({
-                status: 400,
-                message: "Get error",
-                data: JSON.stringify(temp)
-            })
-        }
-    })
+    )
 }
 
 //POST
