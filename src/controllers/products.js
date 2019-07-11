@@ -118,7 +118,6 @@ exports.getBySub = function (req, res){
     let id = req.params.id || '';
     let where = ` WHERE product.id_sub_category=${id}`;
     let ssql = selectQuery + where;
-    console.log(ssql)
     conn.query(ssql, function(error, rows, c){
         try {
             const data = {
