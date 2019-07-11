@@ -87,10 +87,10 @@ exports.getProduct = function (req, res){
     let id_sub = req.params.id_sub || '';
     let where = ` WHERE `;
     if(id !== ''){
-        where = where + `id_product=${id}`;
+        where = where + `product.id_product=${id}`;
     }
     else{
-        where = where + `id_sub_category=${id_sub}`;
+        where = where + `product.id_sub_category=${id_sub}`;
     }
     let ssql = selectQuery + where;
     conn.query(ssql, function(error, rows, c){
