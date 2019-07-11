@@ -11,6 +11,7 @@ const cartRoute 	    = require('./src/routes/cart');
 const loginRoute 	    = require('./src/routes/login');
 const categoryRoute 	    = require('./src/routes/categories');
 const subCategoryRoute 	    = require('./src/routes/sub_category');
+const forgetPassRoute 	    = require('./src/routes/forget_password');
 
 
 app.listen(port);
@@ -25,6 +26,7 @@ app.use('/users', usersRoute);
 app.use('/cart', cartRoute);
 app.use('/categories', categoryRoute);
 app.use('/sub_category', subCategoryRoute);
+app.use('/send_mail', forgetPassRoute);
 
 app.use(verifyToken, (req, res, next) => {  
 	jwt.verify(req.token, 'secretkey', (err) => {
