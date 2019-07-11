@@ -83,8 +83,16 @@ exports.getProducts = function (req, res){
 }
     
 exports.getProduct = function (req, res){
-    let id = req.params.id;
-    let ssql = selectQuery + ` WHERE id_product=${id}`;
+    let id = req.params.id || '';
+    let id_sub_category = req.params.id_sub_category || '';
+    let where = ` WHERE `;
+    if(id !== ''){
+        where = where + `id_product=${id}`;
+    }
+    else{
+        where = where + `id_sub_category=${id_sub_category}`;
+    }
+    let ssql = selectQuery + where;
     conn.query(ssql, function(error, rows, c){
         try {
             let data = {
