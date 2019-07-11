@@ -6,8 +6,8 @@ const wishlist	 = require('../controllers/wishlist');
 
 Route
 	.get('/', wishlist.getWishlist)
-	// .post('/', users.createUsers)
-	// .patch('/password/:id_user', users.changePassword)
+	.post('/', wishlist.createWishlist)
+	.delete('/', wishlist.deleteWishlist)
 
 
 module.exports = Route;

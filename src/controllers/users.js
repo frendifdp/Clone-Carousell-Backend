@@ -79,7 +79,7 @@ exports.createUsers = function(req, res){
 			`SELECT * from user where username=\'${user}\' LIMIT 1`,
 			function(error, rows, field){
 				if(error){
-					console.log('cuy ' +error)
+					console.log(error)
 				}else{
 
 					if(rows!=''){
