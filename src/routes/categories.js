@@ -6,5 +6,6 @@ const controller = require('../controllers/categories');
 
 Route
 	.get('/', controller.getCategory)
+	.get('/:id', controller.getCategory)
 
 module.exports = Route;

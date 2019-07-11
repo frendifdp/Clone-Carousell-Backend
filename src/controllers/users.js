@@ -7,8 +7,6 @@ const crypto	= require('crypto');
 const algorithm = 'aes-256-ctr';
 const password 	= 'd6F3Efeq';
 
-const random = Math.random().toString(36).substring(2, 15);
-console.log(random)
 
 function encrypt(text){
   var cipher = crypto.createCipher(algorithm,password)
