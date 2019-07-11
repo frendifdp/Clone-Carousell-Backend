@@ -2,9 +2,9 @@
 const express 	= require('express');
 const Route 	= express.Router();
 
-const controller = require('../controllers/categories');
+const controller = require('../controllers/forget_password');
 
 Route
-	.get('/', controller.getCategory)
+	.post('/', controller.sendEmail)
 
 module.exports = Route;

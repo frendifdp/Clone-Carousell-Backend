@@ -2,9 +2,9 @@
 const express 	= require('express');
 const Route 	= express.Router();
 
-const controller = require('../controllers/categories');
+const controller = require('../controllers/sub_category');
 
 Route
-	.get('/', controller.getCategory)
+	.get('/', controller.getSubCategory)
 
 module.exports = Route;
