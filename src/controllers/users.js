@@ -7,7 +7,8 @@ const crypto	= require('crypto');
 const algorithm = 'aes-256-ctr';
 const password 	= 'd6F3Efeq';
 
-
+const random = Math.random().toString(36).substring(2, 15);
+console.log(random)
 
 function encrypt(text){
   var cipher = crypto.createCipher(algorithm,password)
@@ -55,36 +56,68 @@ exports.getUsers = function(req, res){
 
 exports.createUsers = function(req, res){
 
-	const username 	= req.body.username;
+	const user 		= req.body.username;
 	const password 	= encrypt(req.body.password);
 	const email		= req.body.email;
 
-	if(!username){
+	if(!user){
 		res.status(400).send('username is require');
 	}else if(!password){
 		res.status(400).send('Password is require');
 	}else if(!email){
 		res.status(400).send('Email is require');
-	}else{
+	}else{ 
+	//cek username, email ada yang sama gak
 		connection.query(
-			`Insert into user set username=?, password=?, email=?`,
-			[username, password, email],
+			`SELECT * from user where username=\'${user}\' LIMIT 1`,
 			function(error, rows, field){
 				if(error){
-					throw error;
+					console.log('cuy ' +error)
 				}else{
-					connection.query(
-						`SELECT *  FROM user ORDER BY id_user DESC LIMIT 1`, function(error, rows, field){
-							if(error){
-								console.log(error);
-							}else{
-								return res.send({
-									data 	: rows,
-									message : "Data has been saved"
-								})
+
+					if(rows!=''){
+						return res.send({
+							message: 'Username is exist'
+						})
+					}else{
+						connection.query(
+							`SELECT * from user where email=\'${email}\' LIMIT 1`,
+							function(error, rowss, field){
+								if(error){
+									console.log(error)
+								}else{
+									if(rowss!=''){
+										return res.send({
+											message: 'Email has been registered'
+										})
+									}else{
+										connection.query( //insert
+											`Insert into user set username=?, password=?, email=?`,
+											[user, password, email],
+											function(error, rowsss, field){
+												if(error){
+													console.log(error);
+												}else{
+													connection.query(
+														`SELECT *  FROM user ORDER BY id_user DESC LIMIT 1`, function(error, rowssss, field){
+															if(error){
+																console.log(error);
+															}else{
+																return res.send({
+																	data 	: rowssss,
+																	message : "Data has been saved"
+																})
+															}
+														}
+													)
+												}
+											}
+										)
+									}
+								}
 							}
-						}
-					)
+						)
+					}
 				}
 			}
 		)
