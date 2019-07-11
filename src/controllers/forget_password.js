@@ -21,14 +21,14 @@ exports.sendEmail = function(req, res){
         from: email,
         to: mailTo,
         subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        text: 'yuhu! :v'
     };
 
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-            console.log(error);
+            res.send({status: 403, message: error})
         } else {
-            console.log('Email sent: ' + info.response);
+            res.send({status: 200, info: info, message: 'Mail sent!'})
         }
     });
 }

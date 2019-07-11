@@ -5,6 +5,16 @@ const port 		    = process.env.PORT || 5000;
 const app		      = express();
 const jwt = require('jsonwebtoken');
 
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const multerUploads = multer({ storage }).single('image');
+const Datauri = require('datauri');
+const path = require('path');
+const dUri = new Datauri;
+const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+const cloudinaryConfig = require('./src/configs/cloudinary');
+const cloudinary = require('cloudinary');
+
 const usersRoute 	  = require('./src/routes/users');
 const productsRoute   = require('./src/routes/products');
 const cartRoute 	    = require('./src/routes/cart');
@@ -19,6 +29,23 @@ console.log('Server Runing '+port);
 
 app.use( bodyParser.urlencoded({ extended:false }) );
 app.use(bodyParser.json());
+
+app.use('*', cloudinaryConfig);
+app.post('/upload', multerUploads, (req, res) => {
+	if(req.file) {
+		const file = dataUri(req).content;
+		return cloudinary.uploader.upload(file).then((result) => {
+			const image = result.url;
+			return res.status(200).json({
+				messge: 'Your image has been uploded successfully to cloudinary',
+				data: {image}
+			})
+		}).catch((err) => res.status(400).json({
+			message: 'someting went wrong while processing your request',
+			data: {err}
+		}))
+	}
+});
 
 app.use('/login', loginRoute);
 app.use('/products', productsRoute)
@@ -50,4 +77,3 @@ function verifyToken(req, res, next) {
     	res.sendStatus(403);
   	}
 }
-
