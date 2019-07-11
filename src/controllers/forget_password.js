@@ -3,7 +3,7 @@
 const conn = require('../configs/db');
 const nodemailer = require('nodemailer');
 const email = 'clone.carousell@gmail.com';
-// const password;
+const mcache = require('memory-cache');
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -17,18 +17,32 @@ const transporter = nodemailer.createTransport({
 
 exports.sendEmail = function(req, res){
     let mailTo = req.body.email;
-    const mailOptions = {
-        from: email,
-        to: mailTo,
-        subject: 'Sending Email using Node.js',
-        text: 'yuhu! :v'
-    };
+    let code = Math.floor(Math.random() * Math.floor(999999))
+    if(code < 100000){
+        code = code + 100000
+    }
+    let key = '__code__'
+    mcache.put(key, code, 10 * 1000);
+    // const mailOptions = {
+    //     from: email,
+    //     to: mailTo,
+    //     subject: 'CCarousell Reset Password',
+    //     text: 'Use this code to reset password ' + code
+    // };
 
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            res.send({status: 403, message: error})
-        } else {
-            res.send({status: 200, info: info, message: 'Mail sent!'})
-        }
-    });
+    // transporter.sendMail(mailOptions, function(error, info){
+    //     if (error) {
+    //         res.send({status: 403, message: error})
+    //     }
+    //     else {
+    //         res.send({status: 200, info: info, message: 'Mail sent!'})
+    //     }
+    // });
+}
+
+exports.resetPassword = function(req, res){
+    let id = req.params.id;
+    let a = mcache.get('__code__')
+
+    console.log(a)
 }
