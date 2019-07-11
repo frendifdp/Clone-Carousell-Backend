@@ -84,13 +84,13 @@ exports.getProducts = function (req, res){
     
 exports.getProduct = function (req, res){
     let id = req.params.id || '';
-    let id_sub_category = req.params.id_sub_category || '';
+    let id_sub = req.params.id_sub || '';
     let where = ` WHERE `;
     if(id !== ''){
-        where = where + `id_product=${id}`;
+        where = where + `product.id_product=${id}`;
     }
     else{
-        where = where + `id_sub_category=${id_sub_category}`;
+        where = where + `product.id_sub_category=${id_sub}`;
     }
     conn.query(
         `SELECT count(*) as total_wishlist  FROM wishlist WHERE id_product=${id}`,
