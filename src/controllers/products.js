@@ -135,6 +135,27 @@ exports.getBySub = function (req, res){
     })
 }
 
+exports.getByUser = function (req, res){
+    let id = req.params.id || '';
+    let where = ` WHERE product.id_user=${id}`;
+    let ssql = selectQuery + where;
+    conn.query(ssql, function(error, rows, c){
+        try {
+            const data = {
+                status: 200,
+                data: rows,
+            }
+            return res.json(data)
+        }
+        catch (error) {
+            return res.send({
+                status: 400,
+                message: "Get error",
+            })
+        }
+    })
+}
+
 //POST
 exports.postProduct = function (req, res) {
     let temp = req.body;
