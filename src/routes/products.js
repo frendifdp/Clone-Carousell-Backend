@@ -8,7 +8,7 @@ Route
     .get('/', controller.getProducts)
     .get('/:id', controller.getProduct)
     .get('/sub/:id', controller.getBySub)
-    .get('/user/:id', controller.getBySub)
+    .get('/user/:id', controller.getByUser)
     .post('/', controller.postProduct)
     .patch('/:id', controller.patchProduct)
     .delete('/:id', controller.delProduct)
