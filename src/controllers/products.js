@@ -84,20 +84,45 @@ exports.getProducts = function (req, res){
     
 exports.getProduct = function (req, res){
     let id = req.params.id || '';
-    let id_sub = req.params.id_sub || '';
-    let where = ` WHERE `;
-    if(id !== ''){
-        where = where + `id_product=${id}`;
-    }
-    else{
-        where = where + `id_sub_category=${id_sub}`;
-    }
+    let where = ` WHERE product.id_product=${id}`;
+    conn.query(
+        `SELECT count(*) as total_wishlist FROM wishlist WHERE id_product=${id}`,
+        function(error, rows, field){
+            if(error){
+                console.log(error)
+            }
+            else{
+                let ssql = selectQuery + where;
+                conn.query(ssql, function(error, rowss, c){
+                    try {
+                        let data = {
+                            status: 200,
+                            data: rowss,
+                            total_wishlist: rows[0].total_wishlist
+                        }
+                        return res.json(data)
+                    }
+                    catch (error) {
+                        return res.send({
+                            status: 400,
+                            message: "Get error"
+                        })
+                    }
+                })
+            }
+        }
+    )
+}
+
+exports.getBySub = function (req, res){
+    let id = req.params.id || '';
+    let where = ` WHERE product.id_sub_category=${id}`;
     let ssql = selectQuery + where;
     conn.query(ssql, function(error, rows, c){
         try {
-            let data = {
+            const data = {
                 status: 200,
-                data: rows
+                data: rows,
             }
             return res.json(data)
         }
@@ -105,7 +130,6 @@ exports.getProduct = function (req, res){
             return res.send({
                 status: 400,
                 message: "Get error",
-                data: JSON.stringify(temp)
             })
         }
     })
