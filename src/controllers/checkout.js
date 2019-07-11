@@ -86,7 +86,6 @@ exports.deleteCheckout  = function(req, res, next){
 	connection.query(
 		`Delete from checkout where id_order=\'${id_order}\'`,
 		function(error, rows, field){
-			console.log(rows)
 			if(error){
 				console.log(error)
 			}else{
