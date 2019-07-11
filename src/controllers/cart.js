@@ -51,6 +51,7 @@ exports.createCart = function(req, res){
 
 	const id_user 		= req.params.id_user;
 	const id_product 	= req.query.id_product;
+	const jumlah 		= parseInt(req.query.jumlah) || 1;
 
 	if(!id_user){
 		res.status(400).send('Id User is require');
@@ -63,28 +64,77 @@ exports.createCart = function(req, res){
 					if(error){
 						console.log(error);
 					}else{
-						const price 		= rows[0].price
+						const price 	= rows[0].price
 						const dateTime 	= getTime();
 
-						connection.query(
-							`insert into cart set id_user=?, id_product=?, total_product=?, total_price=?, date_create=?`,
-							[id_user, id_product, 1, price, dateTime ],
+						connection.query( //cek  is_exist
+							`select * from cart where id_user=? AND id_product=? Limit 1`,
+							[id_user, id_product],
 							function(error, rowss, field){
 								if(error){
 									console.log(error)
 								}else{
-									connection.query( // get data new insert
-										`select * from cart WHERE id_user=${id_user} AND id_product=${id_product} ORDER BY date_create DESC LIMIT 1`,
-										function(error, rowsss, field){
-											if(error){
-												console.log(error)
-											}else{
-												return res.send({
-													data:rowsss
-												})
+									if(rowss=[]){
+										connection.query( //if not exist new insert
+											`insert into cart set id_user=?, id_product=?, total_product=?, total_price=?, date_create=?`,
+												[id_user, id_product, 1, price, dateTime ],
+												function(error, rowsss, field){
+													if(error){
+														console.log(error)
+													}else{
+														connection.query( // get data new insert
+															`select * from cart WHERE id_user=${id_user} AND id_product=${id_product} ORDER BY date_create DESC LIMIT 1`,
+															function(error, rowssss, field){
+																if(error){
+																	console.log(error)
+																}else{
+																	return res.send({
+																		data:rowssss
+																	})
+																}
+															}
+														)
+													}
+												}
+										)
+									}else{ //update
+										connection.query( //get data product
+											`select * from cart where id_user=${id_user} AND id_product=${id_product}  Limit 1`,
+											function(error, rowss, field){
+												if(error){
+													console.log(error);
+												}else{
+													// console.log(rowss)
+													const total_product = rowss[0].total_product + jumlah;
+													const total_price 	= rowss[0].total_price + (rows[0].price * jumlah) ;
+													connection.query( //update
+														`update cart set total_product=?, total_price=?, date_create=? where id_user=? AND id_product=? LIMIT 1`,
+														[total_product, total_price, dateTime, id_user, id_product],		
+														function(error, rows, field){
+															if(error){
+																console.log(error);
+															}else{
+																connection.query(
+																	`select * from cart where id_user=? and id_product=? order by date_create desc limit 1`	,
+																	[id_user, id_product],
+																		function(error, rowsss, field){
+																			return res.send({
+																				data 		: rowsss,
+																				message : 'Data has been updated'
+																			})
+													
+																		}
+																)
+
+															}
+														}
+													)
+												}
+
 											}
-										}
-									)
+										) 
+
+									}
 								}
 							}
 						)
@@ -95,74 +145,10 @@ exports.createCart = function(req, res){
 	} //end 
 
 
-exports.updateCart = function(req, res, next){
-
-	const id_user 			= req.params.id_user;
-	const id_product 		= req.query.id_product;
-	
-	connection.query(
-		`select * from cart where id_user=? AND id_product=? Limit 1`,
-		 [id_user, id_product],
-		function(error, rows, field){
-			if(error){
-				throw error;
-			}else{
-				if(rows != ""){
-					if(!id_user){
-						res.status(400).send ({ message : 'Id User is require' });
-					}else if(!id_product){
-						res.status(400).send ({ message : 'Id Product is require' });
-					}else{
-
-						connection.query( //get data product
-							`select * from product where id_product=${id_product} Limit 1`,
-							function(error, rowss, field){
-								if(error){
-									throw error;
-								}else{
-									
-									const total_product = rows[0].total_product + 1;
-									const total_price 	= rows[0].total_price + rowss[0].price;
-									const time 					= getTime();
-									connection.query(
-										`update cart set total_product=?, total_price=?, date_create=? where id_user=? AND id_product=? LIMIT 1`,
-										[total_product, total_price, time, id_user, id_product],		
-										function(error, rows, field){
-											if(error){
-												console.log(error);
-											}else{
-												connection.query(
-													`select * from cart where id_user=? and id_product=? order by date_create desc limit 1`	,
-													[id_user, id_product],
-														function(error, rowsss, field){
-															return res.send({
-																data 		: rowsss,
-																message : 'Data has been updated'
-															})
-									
-														}
-												)
-
-											}
-										}
-									)
-								}
-							}
-						)
-					}
-				}else{
-					res.status(400).send ({ message : 'Id not valid.' })
-				}
-			}
-		}
-	)
-}
-
-
 
 exports.deleteCart = function(req, res, next){
-	const id_user 		= req.params.id_user;
-	const id_product 	= req.query.id_product;
+	const id_user 		= parseInt(req.params.id_user);
+	const id_product 	= parseInt(req.query.id_product);
 
 	connection.query(
 		`Delete from cart where id_user=? And id_product=? Limit 1`,
