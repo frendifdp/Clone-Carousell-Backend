@@ -3,18 +3,25 @@
 const response 	= require('../responses/res');
 const connection= require('../configs/db');
 
-
+function getTime(){
+	const today 	= new Date();
+	const date 		= today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	const time 		= today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+	const dateTime 	= date+' '+time;
+	return dateTime;
+}
 
 
 exports.getCheckout = function(req, res){
 
 	const id_order 		= req.query.id_order;
 
-	const query 		=  `SELECT *, product.product_name, product.price, address.address, payment_method.name_payment_method  FROM checkout
-							INNER JOIN address ON checkout.id_address=address.id_address
-							INNER JOIN product ON checkout.id_product=product.id_product
-							INNER JOIN payment_method ON checkout.id_payment_method=payment_method.id_payment_method
-							WHERE id_order=\'${id_order}\'`;
+	const query 		=  `SELECT checkout.id_checkout,checkout.id_order, checkout.id_user, user.username, user.firstname, user.lastname, user.email, user.hp, checkout.id_product, checkout.total_product,checkout.total_price, product.product_name, product.price, address.address, payment_method.name_payment_method  FROM checkout
+						    INNER JOIN address ON checkout.id_address=address.id_address
+						    INNER JOIN user ON checkout.id_user=user.id_user
+						    INNER JOIN product ON checkout.id_product=product.id_product
+						    INNER JOIN payment_method ON checkout.id_payment_method=payment_method.id_payment_method
+						    WHERE id_order=\'${id_order}\'`;
 		connection.query(
 			query,
 			function(error, rows, field){
@@ -60,8 +67,9 @@ exports.createCheckout = function(req, res){
 		res.status(400).send('Id address is require');
 	}else{ 
 		const id_order = Math.random().toString(36).substring(2, 15);
+		const dateTime = getTime(); 	
 		connection.query(
-			`INSERT INTO checkout set id_order=\'${id_order}\', id_user=${id_user}, id_product=${id_product}, total_product=${total_product}, id_address=${id_address}, total_price=${total_price}, id_payment_method=${id_payment_method}`,
+			`INSERT INTO checkout set id_order=\'${id_order}\', id_user=${id_user}, id_product=${id_product}, total_product=${total_product}, id_address=${id_address}, total_price=${total_price}, id_payment_method=${id_payment_method}, date_checkout=${dateTime}`,
 			function(error, rows, field){
 
 			}
@@ -73,20 +81,19 @@ exports.createCheckout = function(req, res){
 
 exports.deleteCheckout  = function(req, res, next){
 
-	const id_user 	= parseInt(req.params.id_user);
-	const id_order 	= parseInt(req.params.id_order);
+	const id_order 	= req.query.id_order;
 
 	connection.query(
-		`Delete from checkout where id_order=? AND id_user Limit 1`,
-		[id_order, id_user],
+		`Delete from checkout where id_order=\'${id_order}\'`,
 		function(error, rows, field){
+			console.log(rows)
 			if(error){
-				throw error;
+				console.log(error)
 			}else{
 				if(rows.affectedRows != ""){
 					return res.send({
 						message :'Data has been delete',
-						data 	: {id_order, id_user}
+						data 	: {id_order}
 					})
 				}else{
 					return res.status(400).send ({ 

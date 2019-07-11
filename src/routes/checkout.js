@@ -7,6 +7,6 @@ const checkout 		= require('../controllers/checkout');
 Route
 	.get('/', checkout.getCheckout)
 	.post('/', checkout.createCheckout)
-	// .patch('/:id_user', users.updateCheckout)
+	.delete('/', checkout.deleteCheckout)
 
 module.exports = Route;
