@@ -50,7 +50,7 @@ app.post('/upload', multerUploads, (req, res) => {
 });
 
 app.use('/login', loginRoute);
-app.use('/send_mail', forgetPassRoute);
+app.use('/reset_password', forgetPassRoute);
 app.use('/users', usersRoute);
 app.use('/products', productsRoute)
 app.use('/categories', categoryRoute);
