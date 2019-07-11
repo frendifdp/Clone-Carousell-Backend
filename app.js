@@ -1,9 +1,9 @@
 require('dotenv/config');
-const express 	  = require('express');
-const bodyParser  = require('body-parser');
+const express 		= require('express');
+const bodyParser  	= require('body-parser');
 const port 		    = process.env.PORT || 5000;
-const app		      = express();
-const jwt = require('jsonwebtoken');
+const app		    = express();
+const jwt 			= require('jsonwebtoken');
 
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -15,14 +15,15 @@ const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(
 const cloudinaryConfig = require('./src/configs/cloudinary');
 const cloudinary = require('cloudinary');
 
-const usersRoute 	  = require('./src/routes/users');
-const productsRoute   = require('./src/routes/products');
-const cartRoute 	    = require('./src/routes/cart');
+const usersRoute 	  	= require('./src/routes/users');
 const loginRoute 	    = require('./src/routes/login');
-const checkoutRoute 	    = require('./src/routes/checkout');
-const categoryRoute 	    = require('./src/routes/categories');
-const subCategoryRoute 	    = require('./src/routes/sub_category');
-const forgetPassRoute 	    = require('./src/routes/forget_password');
+const forgetPassRoute 	= require('./src/routes/forget_password');
+const categoryRoute 	= require('./src/routes/categories');
+const subCategoryRoute 	= require('./src/routes/sub_category');
+const productsRoute   	= require('./src/routes/products');
+const wishlistRoute 	= require('./src/routes/wishlist');
+const cartRoute 	    = require('./src/routes/cart');
+const checkoutRoute 	= require('./src/routes/checkout');
 
 
 app.listen(port);
@@ -49,15 +50,14 @@ app.post('/upload', multerUploads, (req, res) => {
 });
 
 app.use('/login', loginRoute);
-app.use('/products', productsRoute)
+app.use('/send_mail', forgetPassRoute);
 app.use('/users', usersRoute);
-app.use('/cart', cartRoute);
-app.use('/checkout', checkoutRoute);
-
-
+app.use('/products', productsRoute)
 app.use('/categories', categoryRoute);
 app.use('/sub_category', subCategoryRoute);
-app.use('/send_mail', forgetPassRoute);
+app.use('/wishlist', wishlistRoute);
+app.use('/cart', cartRoute);
+app.use('/checkout', checkoutRoute);
 
 app.use(verifyToken, (req, res, next) => {  
 	jwt.verify(req.token, 'secretkey', (err) => {
