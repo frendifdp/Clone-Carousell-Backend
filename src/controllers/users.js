@@ -24,9 +24,9 @@ function decrypt(text){
 
 exports.getUsers = function(req, res){
 
-	const username 		= req.query.username || '';
+	const username 		= req.query.username;
 
-	const query 		=  `SELECT *  FROM user WHERE username Like '%${username}%' LIMIT 10`;
+	const query 		=  `SELECT *  FROM user WHERE username=\'${username}\' LIMIT 1`;
 		connection.query(
 			query,
 			function(error, rows, field){
@@ -35,7 +35,7 @@ exports.getUsers = function(req, res){
 				}else{
 					if(rows!=''){
 						return res.send({
-							data  		: rows,
+							data  		: rows[0],
 						})
 					}else{
 						return res.send({
