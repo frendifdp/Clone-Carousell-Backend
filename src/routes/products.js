@@ -7,6 +7,8 @@ const controller 		= require('../controllers/products');
 Route
     .get('/', controller.getProducts)
     .get('/:id', controller.getProduct)
+    .get('/sub/:id', controller.getBySub)
+    .get('/user/:id', controller.getBySub)
     .post('/', controller.postProduct)
     .patch('/:id', controller.patchProduct)
     .delete('/:id', controller.delProduct)
