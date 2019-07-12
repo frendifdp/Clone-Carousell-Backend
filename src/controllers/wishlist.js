@@ -33,7 +33,10 @@ exports.getWishlist = function(req, res){
 		)
 	}else{
 		connection.query(
-			`SELECT wishlist.id_wishlist, wishlist.id_product, product.product_name, product.price, product.date_created, product.image  FROM wishlist LEFT JOIN product ON wishlist.id_product=product.id_product WHERE wishlist.id_user=${id_user}`,
+			`SELECT wishlist.id_wishlist, wishlist.id_product, product.product_name, product.price, product.date_created, product.image, product.id_user as id_seller, user.username, user.image as user_image  FROM wishlist 
+			LEFT JOIN product ON wishlist.id_product=product.id_product 
+			LEFT JOIN user ON product.id_user=user.id_user
+			WHERE wishlist.id_user=${id_user}`,
 			function(error, rows, field){
 				if(error){
 					console.log(error);
