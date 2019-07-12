@@ -5,6 +5,7 @@ const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(
 const cloudinary = require('cloudinary');
 
 exports.uploadImages = function (req, res){
+
 	if(req.file) {
 		const file = dataUri(req).content;
 		return cloudinary.uploader.upload(file).then((result) => {
@@ -18,5 +19,6 @@ exports.uploadImages = function (req, res){
 			message: 'someting went wrong while processing your request',
 			data: {err}
 		}))
-    }
+	}
+	// res.send({file: req.file})
 }

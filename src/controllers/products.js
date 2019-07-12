@@ -2,6 +2,12 @@
 
 const conn = require('../configs/db');
 
+const Datauri = require('datauri');
+const path = require('path');
+const dUri = new Datauri;
+const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+const cloudinary = require('cloudinary');
+
 //GET
 const selectQuery = `SELECT product.*, category.category_name, sub_category.name_sub_category, u.username, u.image as image_user FROM product
 INNER JOIN sub_category ON sub_category.id_sub_category=product.id_sub_category 
@@ -116,7 +122,7 @@ exports.getProduct = function (req, res){
 
 exports.getBySub = function (req, res){
     let id = req.params.id || '';
-    let where = ` WHERE product.id_sub_category=${id}`;
+    let where = ` WHERE product.id_sub_category=${id} ORDER BY id_product DESC`;
     let ssql = selectQuery + where;
     conn.query(ssql, function(error, rows, c){
         try {
@@ -137,7 +143,7 @@ exports.getBySub = function (req, res){
 
 exports.getByUser = function (req, res){
     let id = req.params.id || '';
-    let where = ` WHERE product.id_user=${id}`;
+    let where = ` WHERE product.id_user=${id} ORDER BY id_product DESC`;
     let ssql = selectQuery + where;
     conn.query(ssql, function(error, rows, c){
         try {
@@ -158,6 +164,9 @@ exports.getByUser = function (req, res){
 
 //POST
 exports.postProduct = function (req, res) {
+
+    
+
     let temp = req.body;
     let body = JSON.stringify(temp)
 
@@ -173,30 +182,41 @@ exports.postProduct = function (req, res) {
         message: "Insert error",
         data: JSON.stringify(temp)
     }
-    conn.query(sql, function(error, rows, c){
-        try {
-            let ssql = selectQuery + ` WHERE id_product=${rows.insertId}`;
-            conn.query(ssql, function(error, rows, c){
+    if(req.file) {
+		const file = dataUri(req).content;
+		cloudinary.uploader.upload(file).then((result) => {
+            const image = result.url;
+            sql = sql + `, image="[\\\"${image}\\\"]"`
+            conn.query(sql, function(error, rows, c){
                 try {
-                    let data = {
-                        status: 200,
-                        message: "Product has been added",
-                        data: rows
-                    }
-                    return res.json(data)
+                    let ssql = selectQuery + ` WHERE id_product=${rows.insertId}`;
+                    conn.query(ssql, function(error, rows, c){
+                        try {
+                            let data = {
+                                status: 200,
+                                message: "Product has been added",
+                                data: rows
+                            }
+                            return res.json(data)
+                        }
+                        catch (error) {
+                            return res.send(iferror)
+                        }
+                    })
                 }
                 catch (error) {
                     return res.send(iferror)
                 }
             })
-        }
-        catch (error) {
-            return res.send(iferror)
-        }
-    })
+
+        })
+        .catch((err) => {
+            return res.status(403)
+        })
+    }
 }
 
-//PUT
+//PATCH
 exports.patchProduct = function(req, res){
     let id = req.params.id || "";
 
