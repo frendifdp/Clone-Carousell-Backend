@@ -56,7 +56,7 @@ exports.resetPassword = function(req, res){
     let email = mcache.get('mail');
     let myEmail = email;
     let key = '__code__'+myEmail;
-    let myCode = req.body.code.toString();
+    let myCode = Number(req.body.code);
     let code = mcache.get(key);
     let newPass = req.body.newPass.toString() || "admin";
     console.log(code)
