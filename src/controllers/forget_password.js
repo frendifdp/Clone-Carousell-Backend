@@ -32,14 +32,14 @@ exports.sendEmail = function(req, res){
     if(code < 100000){
         code = code + 100000
     }
-    let key = '__code__' + mailTo
-    mcache.put(key, code, 10 * 1000);
-    mcache.put('email', mailTo, 10 * 1000);
+    let key = '__code__'+mailTo
+    mcache.put(key, code, 300000);
+    mcache.put('mail', mailTo, 300000);
     const mailOptions = {
         from: email,
         to: mailTo,
         subject: 'CCarousell Reset Password',
-        text: 'Use this code to reset password ' + code
+        text: 'Use this code to reset password ' + code + ' this code will expired after 5 minutes'
     };
 
     transporter.sendMail(mailOptions, function(error, info){
@@ -53,22 +53,22 @@ exports.sendEmail = function(req, res){
 }
 
 exports.resetPassword = function(req, res){
-    let email = mcache.get('mail')
-    let key = '__code__' + email
-    let myCode = req.body.code
-    let code = mcache.get(key)
-    let newPass = req.body.newPass;
-
+    let email = mcache.get('mail');
+    let myEmail = email;
+    let key = '__code__'+myEmail;
+    let myCode = req.body.code;
+    let code = mcache.get(key);
+    let newPass = req.body.newPass.toString() || "admin";
     if(myCode !== code){
         res.send({status: 403, message: 'Incorrect code'})
     }
     else{
-        conn.query(`UPDATE user SET password=? WHERE email=?`, [crypto(newPass), email], function(error, rows){
+        conn.query(`UPDATE user SET password=${newPass} WHERE email='${email}'`, function(error, rows){
             try {
                 res.send({status: 200, message: 'Password changed successfully!'})            
             }
             catch (error) {
-                res.send({status: 403, message: 'Change password failed'})
+                res.send({status: 403, message: 'Not registered email'})
             }
         })
     }
