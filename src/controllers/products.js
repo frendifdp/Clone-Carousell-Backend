@@ -198,7 +198,7 @@ exports.postProduct = function (req, res) {
                             return res.json(data)
                         }
                         catch (error) {
-                            return res.send(iferror)
+                            return res.send(error)
                         }
                     })
                 }
