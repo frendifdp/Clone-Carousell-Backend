@@ -5,7 +5,7 @@ const Route 	= express.Router();
 const controller = require('../controllers/forget_password');
 
 Route
-	.post('/', controller.sendEmail)
-	.post('/pass', controller.resetPassword)
+	.post('/', controller.resetPassword)
+	.post('/send', controller.sendEmail)
 
 module.exports = Route;

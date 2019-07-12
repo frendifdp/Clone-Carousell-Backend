@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use('*', cloudinaryConfig);
 app.use('/upload', uploadRoute)
 app.use('/login', loginRoute);
-app.use('/send_mail', forgetPassRoute);
+app.use('/reset_password', forgetPassRoute);
 app.use('/users', usersRoute);
 app.use('/products', productsRoute)
 app.use('/categories', categoryRoute);
