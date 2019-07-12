@@ -73,7 +73,7 @@ exports.createCart = function(req, res){
 								if(error){
 									console.log(error)
 								}else{
-									if(rowss=[]){
+									if(rowss==''){
 										connection.query( //if not exist new insert
 											`insert into cart set id_user=?, id_product=?, total_product=?, total_price=?, date_create=?`,
 												[id_user, id_product, 1, price, dateTime ],
