@@ -210,7 +210,7 @@ exports.patchProduct = function(req, res){
     body = body.replace("}", '');
     
 
-    let sql = `UPDATE product WHERE id_product=${id} SET ${body}`;
+    let sql = `UPDATE product SET ${body} WHERE id_product=${id}`;
     let iferror = {
         status: 400,
         message: "Update error",
