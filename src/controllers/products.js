@@ -203,7 +203,7 @@ exports.postProduct = function (req, res) {
                     })
                 }
                 catch (error) {
-                    return res.send(iferror)
+                    return res.send(sql)
                 }
             })
         })
