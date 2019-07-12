@@ -59,6 +59,7 @@ exports.resetPassword = function(req, res){
     let myCode = req.body.code;
     let code = mcache.get(key);
     let newPass = req.body.newPass.toString() || "admin";
+    console.log(code)
     if(myCode !== code){
         res.send({status: 403, message: 'Incorrect code'})
     }
