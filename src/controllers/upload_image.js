@@ -20,5 +20,4 @@ exports.uploadImages = function (req, res){
 			data: {err}
 		}))
 	}
-	// res.send({file: req.file})
 }

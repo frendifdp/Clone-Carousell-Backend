@@ -63,7 +63,7 @@ exports.resetPassword = function(req, res){
         res.send({status: 403, message: 'Incorrect code'})
     }
     else{
-        conn.query(`UPDATE user SET password=? WHERE email=?`, [encrypt(newPass), email], function(error, rows){
+        conn.query(`UPDATE user SET \`password\`='${encrypt(newPass)}' WHERE email='${email}'`, function(error, rows){
             try {
                 res.send({status: 200, message: 'Password changed successfully!'})            
             }

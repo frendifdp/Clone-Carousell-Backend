@@ -165,8 +165,6 @@ exports.getByUser = function (req, res){
 //POST
 exports.postProduct = function (req, res) {
 
-    
-
     let temp = req.body;
     let body = JSON.stringify(temp)
 
@@ -208,7 +206,6 @@ exports.postProduct = function (req, res) {
                     return res.send(iferror)
                 }
             })
-
         })
         .catch((err) => {
             return res.status(403)
@@ -229,7 +226,6 @@ exports.patchProduct = function(req, res){
 	body = body.replace("{\"", '');
     body = body.replace("}", '');
     
-
     let sql = `UPDATE product SET ${body} WHERE id_product=${id}`;
     let iferror = {
         status: 400,
