@@ -175,6 +175,7 @@ exports.postProduct = function (req, res) {
     body = body.replace("}", '');
 
     let sql = `INSERT INTO product SET ${body}`;
+    console.log(body)
     let iferror = {
         status: 400,
         message: "Insert error",
@@ -198,7 +199,7 @@ exports.postProduct = function (req, res) {
                             return res.json(data)
                         }
                         catch (error) {
-                            return res.send(sql)
+                            return res.send(iferror)
                         }
                     })
                 }
