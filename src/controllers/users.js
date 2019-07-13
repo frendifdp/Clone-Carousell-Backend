@@ -148,7 +148,7 @@ exports.updateUsers = function(req, res, next){
 		`select * from user where id_user=?`,[id],
 		function(error, rows, field){
 			if(error){
-				throw error;
+				console.log(error);
 			}else{
 				if(rows != ""){
 					if(!username){
@@ -160,7 +160,7 @@ exports.updateUsers = function(req, res, next){
 							[username, firstname, lastname, hp, gender, birth, image, id],
 							function(error, rows, field){
 								if(error){
-									throw error;
+									console.log(error);
 								}else{
 									connection.query(
 										`SELECT *  FROM user WHERE id_user=${id} LIMIT 1`,
