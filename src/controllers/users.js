@@ -1,11 +1,12 @@
 'use strict'
+require('dotenv/config');
 
 const response 	= require('../responses/res');
 const connection= require('../configs/db');
 
 const crypto	= require('crypto');
-const algorithm = 'aes-256-ctr';
-const password 	= 'd6F3Efeq';
+const algorithm  = process.env.ENC_ALGORITHM;
+const password 	 = process.env.ENC_PASS;
 
 const Datauri = require('datauri');
 const path = require('path');

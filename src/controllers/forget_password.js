@@ -1,12 +1,16 @@
 'use strict'
+require('dotenv/config');
 
 const conn = require('../configs/db');
 const nodemailer = require('nodemailer');
-const email = 'clone.carousell@gmail.com';
+const email = process.env.EMAIL
+const emailPassword = process.env.EMAIL_PASSWORD
+
+
 const mcache = require('memory-cache');
 const crypto  	 = require('crypto');
-const algorithm  = 'aes-256-ctr';
-const password 	 = 'd6F3Efeq';
+const algorithm  = process.env.ENC_ALGORITHM;
+const password 	 = process.env.ENC_PASS;
 
 function encrypt(text){
     var cipher = crypto.createCipher(algorithm,password)
@@ -22,7 +26,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: email,
-      pass: 'campjogja'
+      pass: emailPassword
     }
 });
 

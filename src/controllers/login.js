@@ -1,9 +1,10 @@
 'use strict'
+require('dotenv/config');
 
 const connection = require('../configs/db');
 const crypto  	 = require('crypto');
-const algorithm  = 'aes-256-ctr';
-const password 	 = 'd6F3Efeq';
+const algorithm  = process.env.ENC_ALGORITHM;
+const password 	 = process.env.ENC_PASS;
 const jwt        = require('jsonwebtoken');
 
 
@@ -30,7 +31,7 @@ exports.login = function(req, res){
             }
             else{
 				if(rows!=''){
-                    jwt.sign({rows}, 'secretkey', (err, token) => {
+                    jwt.sign({rows}, rows[0].id_user, (err, token) => {
                         return res.send({
                             status: 200,
                             data : rows,
