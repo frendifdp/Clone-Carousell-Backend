@@ -7,6 +7,12 @@ const crypto	= require('crypto');
 const algorithm = 'aes-256-ctr';
 const password 	= 'd6F3Efeq';
 
+const Datauri = require('datauri');
+const path = require('path');
+const dUri = new Datauri;
+const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+const cloudinary = require('cloudinary');
+
 
 function encrypt(text){
   var cipher = crypto.createCipher(algorithm,password)
@@ -75,7 +81,11 @@ exports.createUsers = function(req, res){
 		res.status(400).send('Email is require');
 	}else{ 
 	//cek username, email ada yang sama gak
-		connection.query(
+	if(req.file) {
+		const file = dataUri(req).content;
+		cloudinary.uploader.upload(file).then((result) => {
+			const image = result.url;
+			connection.query(
 			`SELECT * from user where username=\'${user}\' LIMIT 1`,
 			function(error, rows, field){
 				if(error){
@@ -100,8 +110,8 @@ exports.createUsers = function(req, res){
 									}else{
 										const date = getTime();
 										connection.query( //insert
-											`Insert into user set username=?, password=?, email=?, date_create=?`,
-											[user, password, email, date],
+											`Insert into user set username=?, password=?, email=?, date_create=?, image=?`,
+											[user, password, email, date, image],
 											function(error, rowsss, field){
 												if(error){
 													console.log(error);
@@ -129,6 +139,13 @@ exports.createUsers = function(req, res){
 				}
 			}
 		)
+			})
+        .catch((err) => res.status(400).json({
+			message: 'someting went wrong while processing your request',
+			data: {err}
+		}))
+	}
+		
 	}
 }
 
