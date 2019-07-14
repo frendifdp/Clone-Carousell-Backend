@@ -62,7 +62,6 @@ exports.getWishlist = function(req, res){
 
 
 
-
 exports.createWishlist = function(req, res){
 
 	const id_user 		= req.query.id_user;
@@ -73,63 +72,106 @@ exports.createWishlist = function(req, res){
 	}else if(!id_product){
 		res.status(400).send('Id Product is require');
 	}else{
+	
 		connection.query(
-			`select * from wishlist where id_user=${id_user} AND id_product=${id_product} Limit 1`,
+			`INSERT INTO wishlist set id_product=${id_product}, id_user=${id_user}`,
 			function(error, rows, field){
 				if(error){
 					console.log(error)
 				}else{
-					if(rows==''){
-						connection.query(
-							`INSERT INTO wishlist set id_product=${id_product}, id_user=${id_user}`,
-							function(error, rows, field){
-								if(error){
-									console.log(error)
-								}else{
-									connection.query(
-										`select * from wishlist WHERE id_user=${id_user} ORDER BY id_wishlist DESC LIMIT 1`,
-										function(error, rowss, field){
-											if (error) {
-												console.log(error)
-											}else{
-												return res.send({
-													data: rowss
-												})
+					connection.query(
+						`select * from wishlist WHERE id_user=${id_user} ORDER BY id_wishlist DESC LIMIT 1`,
+						function(error, rowss, field){
+							if (error) {
+								console.log(error)
+							}else{
+								return res.send({
+									data: rowss
+								})
 
-											}
-										}
-									)
-								}
 							}
-						)
-					}else{
-						connection.query(
-							`Delete from wishlist where id_user=? And id_product=? Limit 1`,
-							[id_user, id_product],
-							function(error, rows, field){
-								if(error){
-									throw error;
-								}else{
-									if(rows.affectedRows != ""){
-										return res.send({
-											message :'Data has been delete',
-											data 	: {id_user, id_product}
-										})
-									}else{
-										return res.status(400).send ({ 
-											message : "Id not valid.",
-										})
-									}
-								}
-							}
-						)
-					}
+						}
+					)
 				}
 			}
-		) 
-			
+		)
 	}
+			
 }
+
+
+
+
+
+
+
+// exports.createWishlist = function(req, res){ //post and delete
+
+// 	const id_user 		= req.query.id_user;
+// 	const id_product	= req.query.id_product;
+
+// 	if(!id_user){
+// 		res.status(400).send('Id User is require');
+// 	}else if(!id_product){
+// 		res.status(400).send('Id Product is require');
+// 	}else{
+// 		connection.query(
+// 			`select * from wishlist where id_user=${id_user} AND id_product=${id_product} Limit 1`,
+// 			function(error, rows, field){
+// 				if(error){
+// 					console.log(error)
+// 				}else{
+// 					if(rows==''){
+// 						connection.query(
+// 							`INSERT INTO wishlist set id_product=${id_product}, id_user=${id_user}`,
+// 							function(error, rows, field){
+// 								if(error){
+// 									console.log(error)
+// 								}else{
+// 									connection.query(
+// 										`select * from wishlist WHERE id_user=${id_user} ORDER BY id_wishlist DESC LIMIT 1`,
+// 										function(error, rowss, field){
+// 											if (error) {
+// 												console.log(error)
+// 											}else{
+// 												return res.send({
+// 													data: rowss
+// 												})
+
+// 											}
+// 										}
+// 									)
+// 								}
+// 							}
+// 						)
+// 					}else{
+// 						connection.query(
+// 							`Delete from wishlist where id_user=? And id_product=? Limit 1`,
+// 							[id_user, id_product],
+// 							function(error, rows, field){
+// 								if(error){
+// 									throw error;
+// 								}else{
+// 									if(rows.affectedRows != ""){
+// 										return res.send({
+// 											message :'Data has been delete',
+// 											data 	: {id_user, id_product}
+// 										})
+// 									}else{
+// 										return res.status(400).send ({ 
+// 											message : "Id not valid.",
+// 										})
+// 									}
+// 								}
+// 							}
+// 						)
+// 					}
+// 				}
+// 			}
+// 		) 
+			
+// 	}
+// }
 
 
 exports.deleteWishlist  = function(req, res, next){
