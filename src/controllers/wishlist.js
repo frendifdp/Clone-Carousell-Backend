@@ -103,6 +103,31 @@ exports.createWishlist = function(req, res){
 
 
 
+exports.deleteWishlist  = function(req, res, next){
+	const id_user 		= parseInt(req.query.id_user);
+	const id_product 	= parseInt(req.query.id_product);
+
+	connection.query(
+		`Delete from wishlist where id_user=? And id_product=? Limit 1`,
+		[id_user, id_product],
+		function(error, rows, field){
+			if(error){
+				throw error;
+			}else{
+				if(rows.affectedRows != ""){
+					return res.send({
+						message :'Data has been delete',
+						data 	: {id_user, id_product}
+					})
+				}else{
+					return res.status(400).send ({ 
+						message : "Id not valid.",
+					})
+				}
+			}
+		}
+	)
+}
 
 
 // exports.createWishlist = function(req, res){ //post and delete
@@ -172,30 +197,3 @@ exports.createWishlist = function(req, res){
 			
 // 	}
 // }
-
-
-exports.deleteWishlist  = function(req, res, next){
-	const id_user 		= parseInt(req.query.id_user);
-	const id_product 	= parseInt(req.query.id_product);
-
-	connection.query(
-		`Delete from wishlist where id_user=? And id_product=? Limit 1`,
-		[id_user, id_product],
-		function(error, rows, field){
-			if(error){
-				throw error;
-			}else{
-				if(rows.affectedRows != ""){
-					return res.send({
-						message :'Data has been delete',
-						data 	: {id_user, id_product}
-					})
-				}else{
-					return res.status(400).send ({ 
-						message : "Id not valid.",
-					})
-				}
-			}
-		}
-	)
-}
