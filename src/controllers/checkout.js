@@ -58,13 +58,13 @@ exports.createCheckout = function(req, res){
 	const id_payment_method	= req.body.id_payment_method;
 
 	if(!id_user){
-		res.status(400).send('Id User is require');
+		res.status(400).send('Id User is required');
 	}else if(!id_product){
-		res.status(400).send('Id Product is require');
+		res.status(400).send('Id Product is required');
 	}else if(!total_product){
-		res.status(400).send('Total Product is require');
+		res.status(400).send('Total Product is required');
 	}else if(!id_address){
-		res.status(400).send('Id address is require');
+		res.status(400).send('Id address is required');
 	}else{ 
 		const id_order = Math.random().toString(36).substring(2, 15);
 		const dateTime = getTime(); 	
