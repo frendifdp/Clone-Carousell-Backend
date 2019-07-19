@@ -5,7 +5,7 @@ const connection = require('../configs/db');
 
 function sendNotification(message, playerId){
 	const data = {
-		app_id: "df4cae47-cd9d-4dd5-b97f-5f63593f39fb",
+		app_id: "3baaf2c9-40a4-419b-9c15-903900af33df",
 		contents: message,
 		include_player_ids: [playerId]
 	};
